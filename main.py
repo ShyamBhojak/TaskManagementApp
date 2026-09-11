@@ -7,7 +7,7 @@ Base.metadata.create_all(engine)
 
 app = FastAPI(
     title="Task Management App",
-    description="Task Management App System by FastAPI",
+    description="",
     version="1.0.0"
 )
 app.include_router(task_routes)

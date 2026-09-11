@@ -10,3 +10,7 @@ task_routes = APIRouter(prefix="/tasks")
 @task_routes.post("/create")
 def createtask(data:TaskSchema, db = Depends(get_db)): #(db)using dependency injection
     return controller.createtask(data, db)
+
+@task_routes.get("/")
+def get_all_tasks(db = Depends(get_db)):
+    return controller.get_tasks(db)
