@@ -22,3 +22,7 @@ def get_all_task(task_id: int, db = Depends(get_db)):
 @task_routes.put("/updatetask/{task_id}")
 def update_task(task_id:int, data:TaskSchema, db = Depends(get_db)):
     return controller.update_task(task_id, data, db)
+
+@task_routes.delete("/deletetask/{task_id}")
+def delete_task(task_id:int, db = Depends(get_db)):
+    return controller.delete_task(task_id,db)

@@ -52,6 +52,21 @@ def update_task(task_id: int, data:TaskSchema, db:Session):
     db.refresh(task)
 
     return{
-        "Status":"Task Updated",
-        "Task":task
+        "status":"Task Updated",
+        "task":task
     }
+
+
+def delete_task(task_id:int, db:Session):
+    task = db.query(Task).get(task_id)
+    if not task:
+        return HTTPException(404,f"Task not found at id {task_id}")
+
+    db.delete(task)
+    db.commit()
+
+    return{
+        "status":"Task Deleted",
+        "deleted task":task
+    }
+    
