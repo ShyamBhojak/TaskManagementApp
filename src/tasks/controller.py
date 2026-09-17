@@ -25,11 +25,33 @@ def get_tasks(db:Session):
         "data":tasks
     }
 
-def get_tasks(task_id:int, db:Session):
+def get_task(task_id:int, db:Session):
     task = db.query(Task).get(task_id)
     if not task:
         return HTTPException(404,f"Task not found at id {task_id}")
     return{
         "status":"Task Found",
         "task":task
+    }
+
+def update_task(task_id: int, data:TaskSchema, db:Session):
+    task = db.query(Task).get(task_id)
+    if not task:
+        return HTTPException(404,f"Task not found at id {task_id}")
+
+    # task.title = data.title
+    # task.description = data.description
+    # task.isCompleted = data.isCompleted
+
+    data = data.model_dump()
+    for field, value in data.items():
+        setattr(task, field, value)
+
+    db.add(task)
+    db.commit()
+    db.refresh(task)
+
+    return{
+        "Status":"Task Updated",
+        "Task":task
     }

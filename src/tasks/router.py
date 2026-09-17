@@ -16,5 +16,9 @@ def get_all_tasks(db = Depends(get_db)):
     return controller.get_tasks(db)
 
 @task_routes.get("/{task_id}")
-def get_all_tasks(task_id: int, db = Depends(get_db)):
-    return controller.get_tasks(task_id, db)
+def get_all_task(task_id: int, db = Depends(get_db)):
+    return controller.get_task(task_id, db)
+
+@task_routes.put("/updatetask/{task_id}")
+def update_task(task_id:int, data:TaskSchema, db = Depends(get_db)):
+    return controller.update_task(task_id, data, db)
