@@ -51,7 +51,7 @@ def login(credentials: LoginSchema, db:Session):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Password...")
 
     #EXPIRY TIME
-    exp_time = datetime.now() + timedelta(seconds=settings.EXP_TIME)
+    exp_time = datetime.now() + timedelta(minutes=settings.EXP_TIME)
     print(exp_time)
 
     #GENERATE TOKEN
