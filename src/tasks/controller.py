@@ -2,13 +2,15 @@ from src.tasks.dtos import TaskSchema
 from sqlalchemy.orm import Session
 from src.tasks.models import Task
 from fastapi import HTTPException
+from src.users.models import User
 
-def createtask(data:TaskSchema,db:Session):
+def createtask(data:TaskSchema,db:Session,user:User):
     record = data.model_dump()
     task = Task(
         title = record['title'],
         description = record['description'],
-        isCompleted = record['isCompleted']
+        isCompleted = record['isCompleted'],
+        user_id = user.id
     )
     db.add(task)
     db.commit()
@@ -19,7 +21,7 @@ def createtask(data:TaskSchema,db:Session):
     # }
     return task
 
-def get_tasks(db:Session):
+def get_tasks(db:Session, user:User):
     tasks = db.query(Task).all()
     # return{
     #     "status":"All Tasks",
@@ -27,7 +29,7 @@ def get_tasks(db:Session):
     # }
     return tasks
 
-def get_task(task_id:int, db:Session):
+def get_task(task_id:int, db:Session, user:User):
     task = db.query(Task).get(task_id)
     if not task:
         return HTTPException(404,f"Task not found at id {task_id}")
@@ -37,7 +39,7 @@ def get_task(task_id:int, db:Session):
     # }
     return task
 
-def update_task(task_id: int, data:TaskSchema, db:Session):
+def update_task(task_id: int, data:TaskSchema, db:Session, user:User):
     task = db.query(Task).get(task_id)
     if not task:
         return HTTPException(404,f"Task not found at id {task_id}")
@@ -62,7 +64,7 @@ def update_task(task_id: int, data:TaskSchema, db:Session):
     return task
 
 
-def delete_task(task_id:int, db:Session):
+def delete_task(task_id:int, db:Session, user:User):
     task = db.query(Task).get(task_id)
     if not task:
         return HTTPException(404,f"Task not found at id {task_id}")

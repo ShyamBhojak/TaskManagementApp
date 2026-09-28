@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text
+from sqlalchemy import Column, Integer, String, Boolean, TIMESTAMP, text, ForeignKey
 from src.utils.db import Base
 
 class Task(Base):
@@ -8,4 +8,8 @@ class Task(Base):
     description = Column(String)
     isCompleted = Column(Boolean, default=False)
     createdAt = Column(TIMESTAMP, nullable=False, server_default=text("CURRENT_TIMESTAMP"))
+    user_id = Column(
+        Integer,
+        ForeignKey("users.id", ondelete="CASCADE"),
+    )
     
