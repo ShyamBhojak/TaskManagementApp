@@ -22,7 +22,7 @@ def createtask(data:TaskSchema,db:Session,user:User):
     return task
 
 def get_tasks(db:Session, user:User):
-    tasks = db.query(Task).all()
+    tasks = db.query(Task).filter(Task.user_id == user.id).all()
     # return{
     #     "status":"All Tasks",
     #     "data":tasks
@@ -30,9 +30,17 @@ def get_tasks(db:Session, user:User):
     return tasks
 
 def get_task(task_id:int, db:Session, user:User):
+    if not user or not getattr(user, "id", None):
+        raise HTTPException(status_code=401, detail="Authentication required")
+
     task = db.query(Task).get(task_id)
+
     if not task:
-        return HTTPException(404,f"Task not found at id {task_id}")
+        raise HTTPException(status_code=404, detail=f"Task not found at id {task_id}")
+
+    if task.user_id != user.id:
+        raise HTTPException(status_code=401, detail="Unauthorized to access this task")
+
     # return{
     #     "status":"Task Found",
     #     "task":task
@@ -43,6 +51,9 @@ def update_task(task_id: int, data:TaskSchema, db:Session, user:User):
     task = db.query(Task).get(task_id)
     if not task:
         return HTTPException(404,f"Task not found at id {task_id}")
+
+    if task.user_id != user.id:
+        raise HTTPException(401, detail="Not allowed to update task")
 
     # task.title = data.title
     # task.description = data.description
@@ -68,6 +79,8 @@ def delete_task(task_id:int, db:Session, user:User):
     task = db.query(Task).get(task_id)
     if not task:
         return HTTPException(404,f"Task not found at id {task_id}")
+    if task.user_id != user.id:
+        raise HTTPException(401, "Unauthorized to delete this task")
 
     db.delete(task)
     db.commit()
