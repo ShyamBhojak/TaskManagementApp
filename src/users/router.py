@@ -7,8 +7,8 @@ from src.users import controller
 user_routes = APIRouter(prefix="/users")
 
 @user_routes.post("/register", response_model=UserResponseSchema, status_code=status.HTTP_201_CREATED)
-def register(data:UserSchema, db:Session = Depends(get_db)):
-    return controller.register(data,db)
+async def register(data:UserSchema, db:Session = Depends(get_db)):
+    return await controller.register(data,db)
 
 @user_routes.post("/login",status_code=status.HTTP_200_OK)
 def login(credentials: LoginSchema, db:Session = Depends(get_db)):
