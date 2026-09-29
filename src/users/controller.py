@@ -1,4 +1,4 @@
-from fastapi import HTTPException, status, Request
+from fastapi import HTTPException, status, Request, BackgroundTasks
 from src.users.dtos import UserSchema, LoginSchema
 from sqlalchemy.orm import Session
 from src.users.models import User
@@ -17,7 +17,7 @@ def get_password_hash(password):
 def verify_password(plain_password, hashed_password):
     return password_hash.verify(plain_password, hashed_password)
 
-async def register(data: UserSchema, db:Session):
+async def register(data: UserSchema, background_task:BackgroundTasks, db:Session):
     #1. Username Validation
     is_username = db.query(User).filter(User.username == data.username).first()
     if is_username:
@@ -42,8 +42,9 @@ async def register(data: UserSchema, db:Session):
     db.refresh(user)
 
     #Send email confirmation
-    response = await send_email([user.email])
-    print(response)
+    # response = await send_email([user.email])
+    background_task.add_task(send_email,[user.email])
+    # print(response)
 
     return user
 
